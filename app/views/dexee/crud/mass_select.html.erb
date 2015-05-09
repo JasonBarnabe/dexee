@@ -1,0 +1,36 @@
+<%- title @title.nil? ? model_name.to_s.pluralize.underscore.humanize.titlecase : @title %>
+
+<div id="index-options" class="top-resource-links">
+	<% if !controller.available_filters.empty? %>
+		<div id="filters" class="flyout<%=filters_active? ? ' open' : ''%>">
+			<div class="flyout-header"><b>Filters <span class="open-indicator">▲</span><span class="closed-indicator">▼</span></b></div>
+			<div class="flyout-open">
+				<%= render :partial => 'filter', :locals => {:filters => controller.available_filters} %>
+			</div>
+		</div>
+	<% end %>
+</div>
+
+<%=form_tag *@submit_options do %>
+	<% if defined?(options_template) && options_template %>
+		<%=render :partial => options_template %>
+	<% end %>
+
+	<p>
+		<button type="button" class="toggle-selected-checkboxes">Toggle selection</button>
+		<input type="submit" value="Submit">
+	</p>
+
+	<%= render :partial => 'list', :locals => {:resources => @resources, :attrs => @attrs, :additional_values => @additional_values, :allow_edits => true, :row_links => false } %>
+
+	<% if @resources.respond_to?(:total_pages) %>
+		<p>
+			<%= will_paginate @resources %>
+		</p>
+	<% end %>
+
+	<p>
+		<button type="button" class="toggle-selected-checkboxes">Toggle selection</button>
+		<input type="submit" value="Submit">
+	</p>
+<% end %>

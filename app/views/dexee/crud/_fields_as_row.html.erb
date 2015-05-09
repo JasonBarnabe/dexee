@@ -1,0 +1,32 @@
+<%# Render fields in table format for a resource. Options:
+	:resource - model being edited
+	:id_attrs - attributes to display to identify the row but will not be edited, hash from attribute_name to options hash
+	:attrs - attributes that will be edited, hash from attribute_name to options hash
+	:simple_form - simple_form object created at a higher level
+	:skip_field - a proc that determines if a given field with be skipped (the table cell will remain). Accepts a resource and a attribute name
+	:child - (optional) boolean - is this being rendered as a child of another object?
+%>
+<% child = false if !defined?(child) %>
+<tr>
+	<% id_attrs.each do |id_attr, opts| %>
+		<th><%=display_attr(resource, id_attr)%></th>
+	<% end %>
+	<% first = true
+	attrs.each do |attr, opts| %>
+		<td>
+			<% if !defined?(skip_field) or skip_field.nil? or !skip_field.call(resource, attr) %>
+				<% if first
+					if child %>
+						<input class="<%=simple_form.object_name.split(/[\[\]]/)[1].sub('_attributes', '')%>-index" type="hidden" value="<%=simple_form.options[:child_index]%>">
+						<%= simple_form.hidden_field :id %>
+					<% else %>
+						<input type="hidden" name="<%=simple_form.object_name.split('[').first%>_ids[]" value="<%=simple_form.object.id%>">
+					<% end
+					first = false
+				end
+				# take hint out - displayed on th %>
+				<%= render :partial => 'field', :locals => {:resource => simple_form.object, :attr => attr, :opts => opts.merge({:label => false, :hint => nil}), :simple_form => simple_form, :skip_required => child} %>
+			<% end %>
+		</td>
+	<% end %>
+</tr>

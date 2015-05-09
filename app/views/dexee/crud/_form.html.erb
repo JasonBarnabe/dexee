@@ -1,0 +1,23 @@
+<%= simple_form_for(@resource) do |f| %>
+	<%= render :partial => 'fields', :locals => {:attrs_for_form => attrs_for_form, :resource => @resource, :simple_form => f} %>
+
+	<% if !children_for_form.empty? %>
+		<p>
+			<%= f.button :submit %>
+		</p>
+	<% end %>
+
+	<% children_for_form.each do |child_name, opts|
+		label = opts[:label].nil? ? child_name.to_s.pluralize.titlecase : opts[:label]%>
+		<h2 class="child-form-title"><%=label%></h2>
+		<%= render :partial => 'children_form', :locals => {:resource => @resource, :child_name => child_name, :opts => opts, :association_children => @association_children, :child_index => @child_index, :simple_form => f} %>
+	<% end %>
+
+	<% if @return_to %>
+		<input type="hidden" name="return_to" value="<%=@return_to%>">
+	<% end %>
+
+	<p>
+		<%= f.button :submit %>
+	</p>
+<% end %>

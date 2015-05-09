@@ -1,0 +1,47 @@
+<%
+# Locals this is expecting:
+# resource: object being formed
+# attr: attribute name on object
+# opts: options to pass to simple_form, and:
+#	-unbound_type: make this an unbound field - :text or :button
+#	-disabled: make the unbound field disabled
+# simple_form: simple_form object
+# skip_required: true to turn off HTML5 requires (default is false - add requires when the field is required) 
+
+multifield = !opts[:fields].nil?
+fields = opts[:fields] || {attr => opts}
+skip_required = false if !defined?(skip_required) || skip_required.nil?
+
+if multifield %>
+	<div class="input <%=simple_form.object_name%>_<%=attr%>">
+<% end
+
+fields.each_with_index do |(attr, field_opts), i|
+	if multifield
+		field_opts[:label] = i == 0 ? opts[:label] : false
+		field_opts[:wrapper] = false
+		field_opts[:hint] = opts[:hint] if i == fields.length - 1
+	end
+	if field_opts[:unbound]
+		if !multifield %>
+			<div class="input">
+		<% end
+			if i == 0 && field_opts[:label] != false%>
+				<label class="control-label" for="<%=attr%>"><%=field_opts[:label] || attr.to_s.humanize -%></label><%
+			end
+			if field_opts[:unbound] == :text
+				%><input id="<%=attr%>"<%if field_opts[:disabled]%> disabled<%end%><%if field_opts[:size]%> size="<%=field_opts[:size]%>"<%end%>>
+			<% else
+				%><button class="button-<%=attr%>"<%if field_opts[:disabled]%> disabled<%end%> type="button"><%=attr.to_s.humanize%></button>
+			<% end
+		if !multifield %>
+			</div>
+		<% end
+	else %>
+		<%= render :partial => 'nested_field', :locals => {:resource => simple_form.object, :attr => attr, :field_opts => field_opts, :simple_form => simple_form, :skip_required => skip_required} %>
+	<% end
+end
+
+if multifield %>
+	</div>
+<% end %>

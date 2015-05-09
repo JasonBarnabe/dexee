@@ -1,0 +1,46 @@
+<%
+# Locals:
+# -resource: the ActiveRecord object the children will be associated to
+# -child_name: the name of association on resource
+# -children: an array of ActiveRecords: the potential children to associate to the parent
+%>
+<% child_index_attrs = attrs_for_associate(child_name) %>
+<button type="button" class="toggle-selected-checkboxes">Toggle selection</button>
+<table class="index-table">
+<thead>
+	<tr>
+		<th></th>
+		<% child_index_attrs.each do |attr, opts| %>
+			<%=render :partial => 'list_th', :locals => {:attr => attr, :opts => opts}%>
+		<% end %>
+	</tr>
+</thead>
+<tbody>
+	<% ids_name = child_name.to_s.singularize + '_ids'
+	checkbox_name = "#{resource.class.name.tableize.singularize}[#{ids_name}][]"
+	inverse_is_singular = false
+	inverse_name = resource.class.name.tableize
+	if !children.first.respond_to?(inverse_name)
+		inverse_name = inverse_name.singularize
+		inverse_is_singular = true
+	end
+	children.each do |child| %>
+		<tr>
+			<td>
+				<% if inverse_is_singular %>
+					<%= check_box_tag checkbox_name, child.id, !child.send(inverse_name).nil? && child.send(inverse_name).id == resource.id %>
+				<% else %>
+					<%= check_box_tag checkbox_name, child.id, child.send(inverse_name).include?(resource) || (resource.respond_to?(ids_name) && resource.send(ids_name).include?(child.id))%></td>
+				<% end %>
+			</td>
+			<% child_index_attrs.each do |attr, opts| %>
+				<td>
+					<%=display_attr(child, attr)%>
+				</td>
+			<% end %>
+		</tr>
+	<% end %>
+	<%= hidden_field_tag checkbox_name, '' %>
+</tbody>
+</table>
+<button type="button" class="toggle-selected-checkboxes">Toggle selection</button>

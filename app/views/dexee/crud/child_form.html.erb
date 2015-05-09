@@ -1,0 +1,3 @@
+<%= simple_fields_for @resource do |f| %>
+	<%= render :partial => 'child_form', :locals => {:child_name => @child_name, :simple_form => f, :child_index => @child_index, :resource => @resource, :opts => {:show_in_table => @format == 'table', :attrs => @attrs}, :only_row => true} %>
+<% end %>

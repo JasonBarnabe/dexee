@@ -1,0 +1,47 @@
+<%
+attr_parts = attr.to_s.split('.')
+if attr_parts.length > 1
+	resource = resource.send(attr_parts.first)
+	if resource.nil? %>
+		-
+	<% else
+		attr_parts.shift %>
+		<%= simple_form.fields_for(resource) do |sf| %>
+			<%=render partial: 'nested_field', locals: {resource: resource, attr: attr_parts.join('.'), simple_form: sf, skip_required: skip_required, field_opts: field_opts}%>
+		<% end
+	end
+else
+	model_attr = resource.class.to_model_attr(attr)
+	required = (defined?(skip_required) and skip_required) ? !skip_required : nil
+	# Avoid i18n lookups - https://github.com/plataformatec/simple_form/issues/1227
+	[:hint, :placeholder].each do |attr|
+		field_opts[attr] = false if field_opts[attr].nil?
+	end
+	field_opts[:label] = attr.to_s.humanize if field_opts[:label].nil?
+	if field_opts[:compound] %>
+		<%= simple_form.simple_fields_for attr do |ff| %>
+			<% # hard-coding required here - not sure how to calculate from https://github.com/plataformatec/simple_form/blob/87323fd625802f3aea7fd7d8a2fd64016b18cdaa/lib/simple_form/helpers/required.rb %>
+			<%= ff.input attr, field_opts.merge({:as => field_opts[:type], :errors => resource.errors[attr.to_s.sub('_compound', '').to_sym], :required => true}) %>
+		<% end
+	elsif model_attr.nil?
+		if !resource.has_attribute?(attr)
+			# Could be a calculated attribute.
+			attr_column = nil
+			# raise "Unknown attribute #{attr}"  && Rails.env.development?
+		else
+			attr_column = resource.column_for_attribute(attr)
+		end
+		if !attr_column.nil? and attr_column.type == :date %>
+			<%= simple_form.input attr, field_opts.merge({:as => :datepicker}) %>
+		<% else %>
+			<% field_opts[:as] = field_opts.delete(:type) if field_opts[:type]
+			# Setting maxlength will set size. size sucks.
+			field_opts[:input_html] = {size: nil} %>
+			<%= simple_form.input attr, field_opts.merge({:required => required}) %>
+		<% end
+	elsif resource.class.get_model_class(model_attr).search_fields.nil? %>
+		<%= simple_form.association model_attr, field_opts.merge({:label_method => :form_display_text, :required => required}) %>
+	<% else %>
+		<%= simple_form.input model_attr, field_opts.merge({as: :combobox, :autocomplete_url => url_for(:controller => resource.class.get_model_class(model_attr).to_s.underscore.pluralize, :action => 'autocomplete_list', :id => nil), :required => required}) %>
+	<% end
+end %>

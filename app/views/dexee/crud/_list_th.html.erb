@@ -1,0 +1,1 @@
+<th<%if !opts[:type].nil?%> class="<%=opts[:type]%>"<%end%>><span><% if !opts[:full_label].nil? %><abbr title="<%=opts[:full_label]%>"><% end %><%= opts[:label].nil? ? attr.to_s.titlecase : opts[:label] %><% if !opts[:full_label].nil? %></abbr><% end %></span></th>

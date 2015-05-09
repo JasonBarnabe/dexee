@@ -1,0 +1,33 @@
+<%#
+	-simple_form
+	-child_name
+	-opts
+		-show_in_table
+		-attrs
+%>
+
+<% child_controller = get_controller_for_attr(simple_form.object, child_name)
+inverse = inverse_attribute(controller.model_class, child_name)
+inverse_id = (inverse.to_s + '_id').to_sym
+child_form_attrs = opts[:attrs].nil? ? child_controller.attrs_for_form : opts[:attrs]
+child_form_attrs.delete(inverse)
+child_form_attrs.delete(inverse_id)
+child_index = 0 unless defined?(child_index)
+only_row = false if !defined?(only_row)
+
+if opts[:show_in_table] %>
+	<%= render :partial => 'form_in_table', :locals => {:child_name => child_name, :simple_form => simple_form, :attrs => child_form_attrs, :only_row => only_row, :child_index => child_index} %>
+<% else %>
+	<%= simple_form.simple_fields_for(child_name, simple_form.object.send(child_name), :child_index => child_index) do |ff| %>
+		<% if !ff.object.nil? %>
+			<div class="child-form">
+				<input class="<%=child_name%>-index" type="hidden" value="<%=ff.options[:child_index]%>">
+				<%# This will give an error if accepts_nested_attributes_for is not set %>
+				<%= ff.hidden_field :id %>
+				<% child_form_attrs.each do |attr, opts| %>
+					<%= render :partial => 'field', :locals => {:resource => ff.object, :attr => attr, :opts => opts, :simple_form => ff, :skip_required => true} %>
+				<% end %>
+			</div>
+		<% end %>
+	<% end %>
+<% end %>

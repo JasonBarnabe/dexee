@@ -1,0 +1,51 @@
+<%# Render fields for numerous resources. Options:
+	EITHER:
+		:resources - models being edited
+	OR
+		:child_name - name of relationship being edited for the object attached to the simple_form
+	:id_attrs - attributes to display to identify the row but will not be edited, hash from attribute_name to options hash
+	:attrs - attributes that will be edited, hash from attribute_name to options hash
+	:simple_form - simple_form object created at a higher level
+	:child_index => start index for children being rendered
+	:skip_field - (optional) a proc that determines if a given field with be skipped (the table cell will remain). Accepts a resource and a attribute name
+	:only_row - (optional) only output tr elements, not the surrounding stuff
+%>
+<% id_attrs = {} if !defined?(id_attrs) or id_attrs.nil? 
+skip_field = nil if !defined?(skip_field)
+only_row = false if !defined?(only_row)
+child = false if !defined?(child)
+child_index = 0 if !defined?(child_index) %>
+<% if !only_row %>
+	<table class="form-table">
+		<thead>
+			<tr>
+				<% id_attrs.each do |id_attr, opts| %>
+					<th><%=(opts[:label].nil? or opts[:label] == false) ? id_attr.to_s.humanize : opts[:label]%></th>
+				<% end %>
+				<% attrs.each do |attr, opts| %>
+					<th>
+						<%=(opts[:label].nil? or opts[:label] == false) ? attr.to_s.humanize : opts[:label]%>
+						<% if !opts[:hint].nil? %>
+							<div class="hint"><%=opts[:hint]%></div>
+						<% end %>
+					</th>
+				<% end %>
+			</tr>
+		</thead>
+		<tbody>
+<% end %>
+			<% if defined?(resources)
+				resources.each do |resource| %>
+					<%= simple_form.simple_fields_for(resource.id.to_s, resource, :child_index => child_index) do |simple_fields| %>
+						<%= render :partial => 'fields_as_row', :locals => {:resource => resource, :id_attrs => id_attrs, :attrs => attrs, :simple_form => simple_fields, :skip_field => skip_field} %>
+					<% end
+				end
+			else %>
+				<%= simple_form.simple_fields_for(child_name, :child_index => child_index) do |simple_fields| %>
+					<%= render :partial => 'fields_as_row', :locals => {:id_attrs => id_attrs, :attrs => attrs, :simple_form => simple_fields, :skip_field => skip_field, :child => true} %>
+				<% end
+			end %>
+<% if !only_row %>
+		</tbody>
+	</table>
+<% end %>

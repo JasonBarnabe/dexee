@@ -1,0 +1,64 @@
+<%
+# UI that should show when viewing a resource. Parameters:
+# - resource
+%>
+<div class="top-resource-links <%=model_name.underscore%>">
+
+	<% if !model_class.search_fields.nil? and !model_class.search_fields.empty? %>
+		<input id="<%=model_name.to_s.pluralize.underscore%>-jump" class="combobox-entry jump-to" data-autocomplete-url="<%=url_for(:controller => model_name.underscore.pluralize, :action => 'autocomplete_list', :id => nil)%>" data-jump-url="<%=url_for(:action => :show, :id => 999999999)%>" placeholder="Jump to" <%if action_name == 'index'%>autofocus<%end%>>
+	<% end %>
+	<% if !['new', 'create'].include?(action_name) %>
+		<%= link_to 'New', [:new, model_name.underscore.to_sym], :class => "action-link" %>
+	<% end %>
+	<% if defined?(resource) && !resource.nil? && !resource.new_record? %>
+		<% if !['edit', 'update'].include?(action_name) %>
+			<%= link_to 'Edit', [:edit, resource], :class => "action-link" %>
+		<% end %>
+		<% if resource.allow_delete? %>
+			<%= link_to 'Delete', url_for(id: resource.id, return_to: url_for(action: 'index')), :method => :delete, :class => "action-link", :data => {:confirm => "Delete #{resource.display_text}?"} %>
+		<% end %>
+		<% if !additional_show_actions.nil? %>
+			<% additional_show_actions.call(resource).each do |action|
+				if action_name != action[:action].to_s %>
+					<%= link_to action[:label] || action[:action].to_s.titlecase, [resource, action[:action]], :method => action[:method] == :get ? nil : action[:method], :data => {:confirm => action[:confirm]}, :class => "action-link action-link-#{action[:action].to_s}" %>
+				<% end %>
+			<% end %>
+		<% end %>
+	<% end %>
+
+	<% if action_name == 'index' %>
+		<% if !controller.available_filters.empty? %>
+			<div id="filters" class="flyout<%=filters_active? ? ' open' : ''%>">
+				<div class="flyout-header"><b>Filters <span class="open-indicator">▲</span><span class="closed-indicator">▼</span></b></div>
+				<div class="flyout-open">
+					<%= render :partial => 'filter', :locals => {:filters => controller.available_filters} %>
+				</div>
+			</div>
+		<% end %>
+
+		<% if !controller.available_reports.empty? %>
+			<div id="reports" class="flyout">
+				<div class="flyout-header"><b>Reports <span class="open-indicator">▲</span><span class="closed-indicator">▼</span></b></div>
+				<div class="flyout-open">
+					<% controller.available_reports.sort.each do |report| %>
+						<%=link_to(report.to_s.humanize.titlecase, :action => 'report', :report_name => report) %><br>
+					<% end %>
+				</div>
+			</div>
+		<% end %>
+
+		<div id="actions" class="flyout">
+			<div class="flyout-header"><b>Actions <span class="open-indicator">▲</span><span class="closed-indicator">▼</span></b></div>
+			<div class="flyout-open">
+				<% xl_params = params.except(:action, :controller)
+				xl_params[:format] = 'xlsx' %>
+				<%= link_to 'Excel', url_for(xl_params) %><br>
+				<% controller.available_views.each do |v| %>
+					<%=link_to(v[:label], v.except(:label)) %><br>
+				<% end %>
+			</div>
+		</div>
+	<% end %>
+
+</div>
+

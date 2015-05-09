@@ -1,0 +1,20 @@
+.autocomplete-suggestions {
+	border: 1px solid #999;
+	background: #FFF;
+	overflow: auto;
+	width: auto !important;
+	max-width: 75%;
+	cursor: default;
+}
+.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; padding-right: 1em;}
+.autocomplete-selected { background: #F0F0F0; }
+/* since we're not searching on exact string, highlighting doesn't work */
+.autocomplete-suggestions strong { font-weight: normal; /*color: #3399FF; */}
+
+/* show it differently */
+.combobox-entry {
+	background-color: #E0FFE0;
+}
+.autocomplete-no-highlight {
+	color: gray;
+}

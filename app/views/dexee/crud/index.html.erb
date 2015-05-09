@@ -1,0 +1,9 @@
+<%- title @title.nil? ? model_name.to_s.pluralize.underscore.humanize.titlecase : @title %>
+
+<%= render :partial => 'list', :locals => {:resources => @resources, :attrs => attrs_for_index, :additional_values => @additional_values } %>
+
+<% if @resources.respond_to?(:total_pages) %>
+	<p>
+		<%= will_paginate @resources %>
+	</p>
+<% end %>

@@ -1,0 +1,19 @@
+<%
+# A row on a report. Accepts:
+# columns - columns array filled with keys or key to options hash. Options hash supports "type".
+# row - row to display
+# class_name
+%>
+<tr <% if defined?(class_name) && !class_name.nil?%>class="<%=class_name%>"<%end%>>
+	<% columns.each do |column|
+		if column.is_a?(Hash)
+			key = column.keys.first
+			options = column.values.first
+		else
+			key = column
+			options = {}
+		end %>
+		<td class="<%if !options[:type].nil?%><%=options[:type]%><%end%> <%if options[:wrap] == false%>report-nowrap<%end%>"><%if row.has_key?(key)%><%=display_value(row[key], true, options[:type], false, options[:precision], options[:model_attribute])%><%end%></td>
+	<% end %>
+</tr>
+

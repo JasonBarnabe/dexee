@@ -1,0 +1,3 @@
+<%= simple_form_for(@resource) do |f| %>
+	<%= render :partial => 'children_form', :locals => {:resource => @resource, :child_name => @child_name, :opts => @opts, :association_children => @association_children, :child_index => @child_index, :simple_form => f} %>
+<% end %>

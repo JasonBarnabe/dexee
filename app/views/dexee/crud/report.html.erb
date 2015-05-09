@@ -1,0 +1,74 @@
+<div id="text-view">
+
+	<% if !@data[:description].nil? %>
+		<p><%=@data[:description]%></p>
+		<% # Prevent outputting this again as a table descriotion
+		@data[:description] = nil
+	end %>
+
+	<% @data[:combined] = false if @data[:combined].nil?
+	tables = @data[:tables].nil? ? [@data] : @data[:tables]
+	tables.each_with_index do |table, table_index|
+		if !table[:description].nil? && !@data[:combined] %>
+			<p><%=table[:description]%></p>
+		<% end
+		if table[:rows].empty? %>
+			<p>No results.</p>
+		<% else %>
+			<% if table_index == 0 || !@data[:combined] %>
+				<table class="report-table">
+					<thead>
+						<tr>
+							<% table[:columns].each do |column|
+								if column.is_a?(Hash)
+									key = column.keys.first
+									options = column.values.first
+								else
+									key = column
+									options = {}
+								end
+								cell_label = options[:label] || key.to_s.titlecase %>
+								<th <%if !options[:type].nil?%>class="<%=options[:type]%>"<%end%>><%=cell_label%></th>
+							<% end %>
+						</tr>
+					</thead>
+					<tbody>
+			<% end
+			if !table[:description].nil? && @data[:combined] %>
+				<tr><th colspan="<%=table[:columns].length%>"><%=table[:description]%></th></tr>
+			<% end
+			table[:rows].each do |d|
+				# Could be a hash with :header, :rows, and :footer
+				if d.is_a?(Hash) && !d[:header].nil? %>
+					<%=render :partial => 'report_row', :locals => {:columns => table[:columns], :row => d[:header], :class_name => 'row-header'}%>
+					<% d = d[:rows]
+				end
+				if d.is_a?(Hash) && d.has_key?(:rows)
+					rows = d[:rows]
+				elsif d.is_a?(Array)
+					rows = d
+				else
+					rows = [d]
+				end
+				rows.each do |row| %>
+					<%=render :partial => 'report_row', :locals => {:columns => table[:columns], :row => row}%>
+				<% end
+				if d.is_a?(Hash) && !d[:footer].nil? %>
+					<%=render :partial => 'report_row', :locals => {:columns => table[:columns], :row => d[:footer], :class_name => 'row-footer'}%>
+					<% d = d[:rows]
+				end
+			end
+			if !table[:footer].nil? and !table[:footer].empty?
+				footer = table[:footer]
+				footer = [footer] if !footer.is_a?(Array)
+				footer.each do |row| %>
+					<%=render :partial => 'report_row', :locals => {:columns => table[:columns], :row => row, :class_name => 'totals'}%>
+				<% end
+			end
+			if table_index == tables.length - 1 || !@data[:combined] %>
+				</tbody>
+				</table>
+			<% end
+		end
+	end %>
+</div>

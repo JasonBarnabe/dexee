@@ -1,0 +1,8 @@
+<%# Render fields. Options:
+	:resource - model being edited
+	:attrs_for_form - attributes that will be edited, hash from attribute_name to options hash
+	:simple_form - simple_form object created at a higher level
+%>
+<% attrs_for_form.each do |attr, opts| %>
+	<%= render :partial => 'field', :locals => {:resource => resource, :attr => attr, :opts => opts, :simple_form => simple_form} %>
+<% end %>

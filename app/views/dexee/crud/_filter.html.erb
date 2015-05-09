@@ -1,0 +1,50 @@
+<% if !filters.empty? 
+	current_params = params.except(:controller, :action, :page) %>
+	<div>
+		<%=link_to '(Clear)', {:controller => params[:controller], :action => params[:action]} %>
+		<% filters.each do |name, options| %>
+			<span class="filter-option">
+				<% if options.has_key?(:type)
+					if options[:type] == :boolean %>
+						<% if params[name] != '1' %>
+							<b>All</b>
+						<% else %>
+							<%=link_to('All', current_params.merge({name => nil})) %>
+						<% end %>
+						|
+						<% if params[name] == '1' %>
+							<b><%=options[:label]%></b>
+						<% else %>
+							<%=link_to(options[:label], current_params.merge({name => 1})) %>
+						<% end %>
+					<% elsif options[:type].is_a?(Class) %>
+						<%=options[:label]%>:
+						<% filter_model = options[:type]
+						if !filter_model.search_fields.nil? and !filter_model.search_fields.empty? %>
+							<% if params[name].nil? %>
+								<b>All</b>
+							<% else %>
+								<%=link_to('All', current_params.merge({name => nil})) %>
+							<% end %>
+							|
+							<input id="<%=filter_model.to_s.pluralize.underscore%>-filter" name="<%=name%>" class="combobox-entry filter_autocomplete" data-autocomplete-url="<%=url_for(:controller => filter_model.name.underscore.pluralize, :action => 'autocomplete_list', :id => nil)%>" data-selected-id="<%=params[name]%>" <%if @autocomplete_filter_values.has_key?(name)%>value="<%=@autocomplete_filter_values[name]%>"<%end%>>
+						<% else %>
+							<%= select_tag name, options_from_collection_for_select(filter_model.all, "id", options[:display_attr] || "name", params[name]), 
+							{:prompt => '(All)', :class => 'filter_dropdown'} %>
+						<% end %>
+					<% elsif options[:type] == :string %>
+						<%=options[:label]%>:
+						<input class="filter_input" name="<%=name%>" value="<%=params[name]%>" <%if !options[:size].nil?%>size="<%=options[:size]%>"<%end%>>
+					<% elsif options[:type] == :date %>
+						<%=options[:label]%>:
+						<input class="filter_input datepicker-month" name="<%=name%>" value="<%=params[name]%>" size="10" placeholder="YYYY-MM">
+					<% end 
+				else %>
+					<%=options[:label]%>:
+					<%= select_tag name, options_for_select(options[:values], params[name]), {:prompt => '(All)', :class => 'filter_dropdown'} %>
+				<% end %>
+			</span>
+		<% end %>
+	</div>
+<% end %>
+

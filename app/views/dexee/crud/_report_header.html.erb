@@ -1,0 +1,5 @@
+<% if @data[:header_partial] %>
+	<p>
+		<%=render :partial => @data[:header_partial], :locals => {:data => @data}%>
+	</p>
+<% end %>

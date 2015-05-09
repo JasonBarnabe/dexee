@@ -1,0 +1,30 @@
+<% 
+# Parameters:
+#  - resource
+#  - child_name
+#  - opts
+#  - association_children
+#  - child_index
+#  - simple_form
+
+label = opts[:label].nil? ? child_name.to_s.pluralize.titlecase : opts[:label]%>
+
+<% if !resource.errors[child_name].empty?
+	resource.errors[child_name].each do |err| %>
+		<p class="error"><%=child_name.to_s.humanize%> <%=err%></p>
+	<% end
+end %>
+
+<% if !opts[:description].nil? %>
+	<p class="child-form-description"><%=opts[:description]%></p>
+<% end %>
+<div id="<%=child_name%>-child-form">
+	<% if child_is_association(child_name) %>
+		<%= render :partial => 'associate_table', :locals => {:resource => resource, :child_name => child_name, :children => association_children[child_name]} %>
+	<% else %>
+		<%= render :partial => 'child_form', :locals => {:resource => resource, :child_name => child_name, :simple_form => simple_form,  :child_index => child_index, :opts => opts} %>
+		<% if !opts[:no_add_button] %>
+			<button class="add-child-form" data-child-name="<%=child_name.to_s%>" data-child-generation-url="<%=url_for(:controller => resource.class.name.tableize.pluralize, :action => 'child_form', :name => child_name.to_s)%>" data-child-format="<%=opts[:show_in_table] ? 'table' : 'div'%>" type="button"><%=opts[:another_label] || "Another #{label.singularize.downcase}"%></button>
+		<% end %>
+	<% end %>
+</div>

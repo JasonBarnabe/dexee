@@ -1,0 +1,82 @@
+<%
+# resources - array of things to show
+# allow_edits - show edit link? (default: true)
+# row_links - each row is a link to that resource (default: true)
+# row_link_url_override_proc - link to something else other than url_for(resource) - proc
+# attrs - attributes of the resources to show, hash of attribute name to options
+#		type
+#		checkbox: render as a checkbox field (for selecting)
+%>
+<%
+allow_edits = true if !defined?(allow_edits) or allow_edits.nil?
+row_links = true if !defined?(row_links) or row_links.nil?
+
+# handle has_one - turn it into a collection
+resources = [] if resources.nil?
+resources = [resources] if resources.is_a?(ActiveRecord::Base)
+
+if resources.empty? %>
+	<p><i>(None)</i></p>
+<% else %>
+	<% any_actions_allowed = allow_edits || resources.any?{|r|r.allow_delete?} || (defined?(additional_resource_actions) && !additional_resource_actions.nil?) %>
+	<table class="index-table">
+		<thead>
+			<tr>
+				<% attrs.each do |attr, opts| %>
+					<%=render :partial => 'list_th', :locals => {:attr => attr, :opts => opts}%>
+				<% end 
+				if any_actions_allowed %>
+					<th></th>
+				<% end %>
+			</tr>
+		</thead>
+		<tbody>
+			<% resources.each do |resource|
+				if dexee_user.can_access_model(resource)
+					if defined?(row_link_url_override_proc) && !row_link_url_override_proc.nil?
+						url = row_link_url_override_proc.call(resource)
+					else
+						url = url_for(resource)
+					end %>
+					<tr data-resource-show-url="<%=url%>">
+						<% attrs.each_with_index do |(attr, opts),i| %>
+							<td<%if !opts[:type].nil?%> class="<%=opts[:type]%>"<%end%>>
+								<% if opts[:checkbox] %>
+									<input type="checkbox" name="<%=attr%>[]" value="<%=resource.send(attr)%>">
+								<% else
+									if row_links %>
+										<a href="<%=url%>">
+									<% end
+									begin %>
+										<%=display_attr(resource, attr, false, additional_values.nil? ? [] : additional_values[resource.id], opts[:type], false, opts.nil? ? nil : opts[:precision])%>
+									<% rescue => ex
+										# don't let an error blow up the page %>
+										<%=ex.inspect%>
+									<% end
+									if row_links %>
+										</a>
+									<% end %>
+								<% end %>
+							</td>
+						<% end
+						if any_actions_allowed %>
+							<td class="list-entry-actions">
+								<% if allow_edits %>
+									<%= link_to 'Edit', edit_polymorphic_path(resource, :return_to => request.fullpath) %>
+								<% end
+								if show_delete_in_list? && resource.allow_delete? %>
+									<%= link_to 'Delete', resource, :method => :delete, :data => {:confirm => "Delete #{resource.display_text}?"} %>
+								<% end
+								if defined?(additional_resource_actions) and additional_resource_actions
+									additional_resource_actions.call(resource).each do |action| %>
+										<%=link_to action.to_s.titlecase, [resource, action], :method => :post %>
+									<% end
+								end %>
+							</td>
+						<% end %>
+					</tr>
+				<% end
+			end %>
+		</tbody>
+	</table>
+<% end %>

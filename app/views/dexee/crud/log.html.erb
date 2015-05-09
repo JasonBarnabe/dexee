@@ -1,0 +1,19 @@
+<%- title "#{@resource.class.name.titlecase}: #{@resource.display_text}: Change Log" %>
+<table>
+	<thead>
+		<tr>
+			<th>Date</th>
+			<th>User</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @activities.each do |a| %>
+			<tr>
+				<td><%=display_value(a.updated_at)%></td>
+				<td><%=a.owner_id.nil? ? '?' : User.find(a.owner_id).email%></td>
+				<td><%=a.key%></td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>

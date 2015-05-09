@@ -1,0 +1,317 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require jquery-ui/datepicker
+ *= require_tree .
+ */
+
+body {
+	margin-top: 2px;
+}
+h1 {
+	margin: 0 0 0.25em 0;
+	font-size: 24px;
+}
+a, a:visited, a:hover {
+	color: blue;
+}
+
+.top-resource-links {
+	margin-bottom: 0.5em;
+}
+.top-resource-links > *, .top-resource-links > * > * {
+	vertical-align: top;
+}
+
+th {
+	text-align: left;
+	vertical-align: top;
+}
+th span {
+	padding-right: 1em;
+}
+.ui-datepicker-calendar th span {
+	padding-right: 0;
+}
+/* Too big by default */
+.ui-datepicker {
+	font-size: 12px !important;
+}
+tfoot td {
+	border-top: 1px solid black;
+}
+
+.index-table {
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+.index-table th, .index-table td {
+	padding: 0 2px;
+	border: 1px solid gray;
+}
+.index-table th span {
+	padding: 0;
+}
+.index-table th, .index-table tbody tr:nth-child(even) {
+	background-color: #EEE;
+}
+.index-table tbody tr:hover {
+	background-color: #EE8;
+}
+.index-table tbody td:not(.list-entry-actions) > a {
+	display: block;
+	text-decoration: none;
+	color: black;
+}
+.index-table .numeric, .index-table .numeric_max_decimals, .index-table .currency {
+	text-align: right;
+}
+
+.simple_form label {
+	font-weight: bold;
+	display: inline-block;
+	width: 15em;
+}
+.simple_form textarea {
+   font: -moz-field;
+   height: 4em;
+}
+.simple_form input:not([name*="compound"]):not([type]):not(.datepicker):not([size]), .simple_form input[type="text"]:not([name*="compound"]):not(.datepicker):not([size]), .simple_form input[type="email"]:not([name*="compound"]):not(.datepicker):not([size]), .simple_form textarea {
+	width: 30em;
+}
+.simple_form input.datepicker {
+	width: 7em;
+}
+input[type=number]:not([size]) {
+	text-align: right;
+	width: 7em;
+}
+/* move checkbox label before input */
+.boolean label {
+	float: left;
+}
+.single-digit-dropdown {
+	width: 3em;
+}
+.error {
+	background-color: #FCC;
+}
+.child-form + .child-form {
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+.child-form-title {
+	margin-bottom: 0.5em;
+}
+abbr[title="required"] {
+	display: none;
+}
+label.required {
+	background-color: #FF7;
+}
+.hint {
+	font-size: x-small;
+	font-style: italic;
+}
+.child-form-description {
+	margin: 0;
+	padding: 0;
+}
+.input.text > * {
+	vertical-align: top;
+}
+
+#breadcrumbs {
+	font-size: smaller;
+}
+#breadcrumbs ol {
+	padding: 0;
+	margin: 0;
+}
+#breadcrumbs li {
+	padding: 0;
+	margin: 0;
+	display: inline;
+	list-style-image: none;
+}
+#breadcrumbs li:not(:last-child):after {
+	content: " > ";
+}
+
+.flyout {
+	border: 1px solid black;
+	display: inline-block;
+}
+.flyout-open {
+	padding-left: 1em;
+	padding-right: 0.5em;
+}
+.flyout .flyout-open {
+	display: none;
+}
+.flyout.open .flyout-open {
+	display: block;
+}
+.flyout-header {
+}
+.flyout-header b {
+	display: block;
+	cursor: pointer;
+	padding: 0 0.5em;
+}
+.flyout.open .flyout-header {
+	border-bottom: 1px solid black;
+}
+.flyout .open-indicator, .flyout .closed-indicator {
+	margin-left: 0.5em;
+	float: right;
+}
+.flyout .open-indicator {
+	display: none;
+}
+.flyout.open .open-indicator {
+	display: inline;
+}
+.flyout.open .closed-indicator {
+	display: none;
+}
+
+.action-link {
+	display: inline-block;
+	font-weight: bold;
+	border: 1px solid black;
+	padding: 0 0.5em;
+}
+a.action-link {
+	color: black;
+	text-decoration: none;
+}
+
+.filter-option {
+	display: block;
+}
+
+#user-info {
+	float: right;
+	font-size: smaller;
+}
+
+.notice, .alert {
+	font-weight: bold;
+}
+.notice {
+	background-color: yellow;
+}
+.alert {
+	background-color: red;
+}
+
+#controls form{
+	display: inline;
+}
+#email-options {
+	background-color: white;
+	position: absolute;
+	width: 500px;
+	margin-left: auto;
+	margin-right: auto;
+	display: none;
+	padding: 2em;
+	border: 2px solid black;
+}
+#email-options label {
+	font-weight: bold;
+}
+#email-options input:not([type=submit]), #email-options textarea {
+	width: 100%;
+}
+
+.child-section {
+	overflow-x: auto;
+}
+
+iframe {
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+@media print {
+	a, a:visited {
+		color: black;
+		text-decoration: none;
+	}
+}
+
+/* For PDFs */
+#text-view {
+	font-family: "Nimbus Roman No9 L", serif;
+}
+
+.report-table {
+	border-spacing: 0;
+}
+.report-table td {
+	vertical-align: top;
+}
+.report-table .report-nowrap {
+	white-space: nowrap;
+}
+.report-table td:not(:first-child), .report-table th:not(:first-child) {
+	padding-left: 5px;
+}
+.report-table td:not(:last-child), .report-table th:not(:last-child) {
+	padding-right: 5px;
+}
+.row-header, .row-footer {
+	background-color: #EEE;
+}
+.row-header td {
+	border-top: 1px solid black;
+}
+.row-footer td {
+	border-bottom: 1px solid black;
+}
+.report-table .numeric, .report-table .currency, .report-table .numeric_max_decimals {
+	text-align: right;
+}
+.totals {
+	font-weight: bold;
+}
+.totals td {
+	border-top: 1px solid black;
+}
+.totals + .totals td {
+	border: 0;
+}
+
+#home-main-links {
+	-moz-column-count: 2;
+	-webkit-column-count: 2;
+	column-count: 2;
+	-moz-column-gap: 2em;
+	-webkit-column-gap: 2em;
+	column-gap: 2em;
+	margin-top: 1em;
+	max-width: 600px;
+}
+#home-main-links p {
+	margin-top: 0;
+	-webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+#home-main-links p input {
+	width: 100%;
+}
+#home-main-links p .new_link {
+	float: right;
+}

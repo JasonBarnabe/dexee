@@ -1,0 +1,97 @@
+<%- title "#{@resource.class.name.titlecase}: #{@resource.display_text}" %>
+
+<table>
+	<% attrs_for_show.each do |attr, opts| %>
+		<tr>
+			<th><%=opts[:label] || attr.to_s.humanize%></th>
+			<td>
+				<% begin %>
+					<%=display_attr(@resource, attr, opts[:link].nil? ? true : opts[:link], @additional_values, opts.nil? ? nil : opts[:type], false, opts.nil? ? nil : opts[:precision])%>
+				<% rescue => ex
+					# don't let an error blow up the page %>
+					<%=ex.inspect%>
+				<% end %>
+			</td>
+		</tr>
+	<% end %>
+	<tr>
+		<td colspan="2"><%= link_to 'Show change log', {:action => 'log', @resource.class.name.foreign_key => @resource.id} %></td>
+	</tr>
+</table>
+<% children_for_show.each do |child_name, opts| %>
+	<% 
+	child_controller = get_controller_for_attr(@resource, child_name)
+	if dexee_user.can_access_controller(child_controller) %>
+		<div id="<%=child_name%>-child-section" class="child-section <%=child_name%>-child-section <%=@resource.class.name.tableize%>-child">
+			<%
+			inverse = inverse_attribute(controller.model_class, child_name)
+			child_index_attrs = []
+			child_index_additional_values = {}
+			if !child_controller.nil?
+				if opts.include?(:attrs)
+					child_index_attrs = opts[:attrs]
+				else
+					child_index_attrs = child_controller.attrs_for_index.dup
+					child_index_attrs.delete(inverse)
+					child_index_attrs.delete((inverse.to_s + '_id').to_sym)
+				end
+				child_index_additional_values = child_controller.additional_index_values
+			end
+			child_records = []
+			total_count = nil
+			limited = false
+			if @other_children.has_key?(child_name)
+				oc = @other_children[child_name]
+				child_records = oc[:objects]
+				total_count = oc[:total_count]
+				limited = child_records.length != total_count
+			else
+				all_children = @resource.send(child_name)
+				if all_children.is_a?(ActiveRecord::Associations::CollectionProxy)
+					total_count = all_children.count
+					if controller.filter_children_on_show
+						limit_override = child_row_limit_override(child_name)
+						if limit_override.nil?
+							(0..total_count-1).each do |i|
+								break if child_records.length >= child_row_limit
+								child_records << all_children[i] if all_children[i].show_in_child_list?
+							end
+						else
+							child_records = all_children.take(limit_override)
+						end
+					else
+						child_records = all_children
+					end
+					limited = child_records.length != total_count
+				else
+					child_records = all_children
+					total_count = 1
+				end
+			end
+
+			allow_edits = opts[:allow_edits].nil? || opts[:allow_edits]%>
+			<h2>
+				<%=opts[:label].nil? ? child_name.to_s.titleize : opts[:label]%>
+				<% if limited %>
+					(<%=child_records.count%> of <%=total_count%>)
+					<%=link_to 'Show more', params.merge({"filter_#{child_name.to_s}" => params["filter_#{child_name.to_s}"].nil? ? 100 : (params["filter_#{child_name.to_s}"].to_i + 100), :anchor => "#{child_name}-child-section"}) %>
+				<% end
+				parent_attr = (inverse.nil? ? @resource.class.name.tableize.singularize : inverse.to_s) + '_id'
+				if allow_edits
+					if show_new_child_link(child_name)
+						url = generate_new_child_link(@resource, child_name)
+						if !url.nil? %>
+							<%=link_to 'New', url %>
+						<% elsif !inverse.nil? %>
+							<%=link_to 'New', :controller => child_name.to_s.pluralize.to_sym, :action => 'new', "#{child_name.to_s.singularize}[#{parent_attr}]" => @resource.id, :return_to => request.fullpath %>
+						<% end
+					end
+				end
+				if child_is_association(child_name) %>
+					<%=link_to 'Associate', {:action => 'associate', :child => child_name, parent_attr => @resource.id, :return_to => request.fullpath} %>
+				<% end %>
+			</h2>
+			<%=render :partial => 'list', :locals => {:resources => child_records, :attrs => child_index_attrs, :additional_values => child_index_additional_values, :allow_edits => allow_edits, :additional_resource_actions => opts[:additional_resource_actions], :row_link_url_override_proc => opts[:row_link_url_override_proc]} %>
+		</div>
+	<% end %>
+<% end %>

@@ -1,0 +1,14 @@
+<%- title "#{@resource.class.find(@resource.id).display_text}: #{params[:child].titlecase}" %>
+<% if @children.empty? %>
+	<p><i>(None available)</i></p>
+<% else %>
+	<%=form_tag({:action => :associate_save}, :method => :patch) do |f|%>
+		<p>
+			<%= submit_tag 'Associate' %>
+		</p>
+		<%= render :partial => 'associate_table', :locals => {:resource => @resource, :children => @children, :child_name => params[:child]} %>
+		<p>
+			<%= submit_tag 'Associate' %>
+		</p>
+	<% end %>
+<% end %>

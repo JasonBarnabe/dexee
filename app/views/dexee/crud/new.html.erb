@@ -1,0 +1,3 @@
+<%- title "New #{@resource.class.name.titlecase}" %>
+<%= render :partial => "before_new_form" rescue nil %>
+<%= render 'form' %>

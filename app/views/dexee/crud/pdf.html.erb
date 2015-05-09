@@ -1,0 +1,59 @@
+<% # wicked_pdf does not work with relative urls, so include the main stylesheet again
+if params[:format] == 'pdf' %>
+	<%= wicked_pdf_stylesheet_link_tag    "application" %>
+<% end %>
+<style>
+	@media print {
+		body > *:not(#text-view) {
+			display: none;
+		}
+	}
+</style>
+
+<% if !defined?(@title_override) && defined?(@resource) && !@resource.nil?
+	title "#{@resource.class.name.titlecase}: #{@resource.display_text}"
+end %>
+
+<div id="controls">
+	<button onclick="showEmailOptions()">E-mail</button>
+	<% if params[:view] == 'text' %>
+		<button class="switch-view" data-view-url="<%=url_for params.merge(:view => 'print')%>">Print View</button>
+	<% else %>
+		<button class="switch-view" data-view-url="<%=url_for params.merge(:view => 'text')%>">Text View</button>
+	<% end %>
+	<% if defined?(additional_actions)
+		additional_actions.each do |label, url| %>
+			<%= link_to label, url, :class => "action-link" %>
+		<% end
+	end %>
+	<% if defined?(options_partial) && options_partial %>
+		<%= render :partial => options_partial %>
+	<% end %>
+</div>
+
+<form id="email-options">
+	<input type="hidden" name="email" value="1">
+	<% params.except(:controller, :action).each do |k, v| %>
+		<input type="hidden" name="<%=k%>" value="<%=v%>">
+	<% end %>
+
+	<p>
+		<label for="email-option-to">To</label><br>
+		<input id="email-option-to" type="email" name="to" required value="<%=defined?(to) ? to : ''%>">
+	</p>
+
+	<p>
+		<label for="email-option-body">Body</label><br>
+		<textarea id="email-option-body" name="body" rows="5"></textarea>
+	</p>
+
+	<p>
+		<input type="submit" value="Send">
+	</p>
+</form>
+
+<% if render_pdf_content %>
+	<%= render :template => template %>
+<% else %>
+	<iframe class="pdf-view" src="<%=url_for(params.merge({:format => 'pdf'}))%>" style="width: 100%"></iframe>
+<% end %>

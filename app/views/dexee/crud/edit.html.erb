@@ -1,0 +1,3 @@
+<%# show original display text, not changed %>
+<%- title "Editing #{@resource.class.name.titlecase}: #{@resource.class.find(@resource.id).display_text}" %>
+<%= render 'form' %>
