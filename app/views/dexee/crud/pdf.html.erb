@@ -1,6 +1,10 @@
 <% # wicked_pdf does not work with relative urls, so include the main stylesheet again
 if params[:format] == 'pdf' %>
-	<%= wicked_pdf_stylesheet_link_tag    "application" %>
+	<style type="text/css">
+		<%=raw Rails.application.assets['dexee/application.js'].to_s%>
+	</style>
+	<%# This doesn't work with engines
+	#= wicked_pdf_stylesheet_link_tag    "dexee/application" %>
 <% end %>
 <style>
 	@media print {

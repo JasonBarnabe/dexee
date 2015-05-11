@@ -9,6 +9,8 @@ module Dexee
 		include Dexee::CrudHelper
 		include PublicActivity::StoreController 
 
+		helper WickedPdfHelper
+
 		respond_to :html, :json
 		respond_to :xlsx, :only => :index
 
@@ -790,7 +792,7 @@ module Dexee
 					render 'pdf', :locals => options.merge({:template => template})
 				end
 				format.pdf do
-					render :pdf => file_name, :template => 'crud/pdf', :formats => 'html', :encoding => 'UTF-8', :print_media_type => true, :orientation => orientation, :locals => {:template => template}
+					render :pdf => file_name, :template => 'dexee/crud/pdf', :formats => 'html', :encoding => 'UTF-8', :print_media_type => true, :orientation => orientation, :locals => {:template => template}
 				end
 			end
 

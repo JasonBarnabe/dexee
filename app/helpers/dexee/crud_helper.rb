@@ -1,6 +1,6 @@
 module Dexee
 	module CrudHelper
-		include ActionView::Helpers::NumberHelper 
+		include ActionView::Helpers::NumberHelper
 
 		# keep_dates = retain dates as date objects?
 		def display_attr(resource, attr, link_if_model = false, additional_values = nil, value_type = nil, keep_dates = false, precision = nil)
