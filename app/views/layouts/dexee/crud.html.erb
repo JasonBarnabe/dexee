@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title><% if @title_override %><%=@title_override%><%else%><%= content_for?(:title) ? content_for(:title) : 'Seed-Ex' %><%end%></title>
-  <%= stylesheet_link_tag    "dexee/application", media: "all", "data-turbolinks-track" => true %>
-  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
-  <%= csrf_meta_tags %>
-</head>
-<body data-no-turbolink="true">
-	<%= render partial: 'user_bar' %>
+<% content_for :content do %>
+
 	<nav id="breadcrumbs">
 		<ol>
 			<li><a href="/">Home</a></li>
@@ -30,18 +22,18 @@
 	<% if controller.is_a?(Dexee::CrudController)
 		srl_o = {}
 		srl_o[:resource] = @resource if defined?(@resource) && !@resource.nil? %>
-			<%=render :partial => 'show_resource_links', :locals => srl_o %>
-			<hr>
+		<%=render :partial => 'show_resource_links', :locals => srl_o %>
+		<hr>
 	<% end %>
 
-<% if !notice.nil? %>
-	<p class="notice"><%= notice %></p>
-<% end %>
-<% if !alert.nil? %>
-	<p class="alert"><%= alert %></p>
+	<% if !notice.nil? %>
+		<p class="notice"><%= notice %></p>
+	<% end %>
+	<% if !alert.nil? %>
+		<p class="alert"><%= alert %></p>
+	<% end %>
+
+	<%= content_for?(:crud_content) ? yield(:crud_content) : yield %>
 <% end %>
 
-<%= yield %>
-
-</body>
-</html>
+<%= render template: "layouts/application" %>

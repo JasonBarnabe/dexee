@@ -30,10 +30,13 @@
 			if !child_controller.nil?
 				if opts.include?(:attrs)
 					child_index_attrs = opts[:attrs]
-				else
+				elsif !inverse.nil?
 					child_index_attrs = child_controller.attrs_for_index.dup
-					child_index_attrs.delete(inverse)
-					child_index_attrs.delete((inverse.to_s + '_id').to_sym)
+					child_index_attrs.delete(inverse.name)
+					child_index_attrs.delete(inverse.name.to_sym)
+					# ..._id
+					child_index_attrs.delete(inverse.foreign_key)
+					child_index_attrs.delete(inverse.foreign_key.to_sym)
 				end
 				child_index_additional_values = child_controller.additional_index_values
 			end
@@ -76,16 +79,15 @@
 					(<%=child_records.count%> of <%=total_count%>)
 					<%=link_to 'Show more', params.merge({"filter_#{child_name.to_s}" => params["filter_#{child_name.to_s}"].nil? ? 100 : (params["filter_#{child_name.to_s}"].to_i + 100), :anchor => "#{child_name}-child-section"}) %>
 				<% end
-				parent_attr = (inverse.nil? ? @resource.class.name.tableize.singularize : inverse.to_s) + '_id'
-				if allow_edits
-					if show_new_child_link(child_name)
-						url = generate_new_child_link(@resource, child_name)
-						if !url.nil? %>
-							<%=link_to 'New', url %>
-						<% elsif !inverse.nil? %>
-							<%=link_to 'New', :controller => child_name.to_s.pluralize.to_sym, :action => 'new', "#{child_name.to_s.singularize}[#{parent_attr}]" => @resource.id, :return_to => request.fullpath %>
-						<% end
-					end
+				parent_attr = inverse.nil? ? (@resource.class.name.tableize.singularize + '_id') : inverse.foreign_key
+				if allow_edits && show_new_child_link(child_name)
+					url = generate_new_child_link(@resource, child_name)
+					if !url.nil? %>
+						<%=link_to 'New', url %>
+					<% elsif !inverse.nil? 
+						child_class_name = @resource.class.reflect_on_association(child_name).class_name.tableize %>
+						<%=link_to 'New', :controller => child_class_name.pluralize, :action => 'new', "#{child_class_name.singularize}[#{inverse.foreign_key}]" => @resource.id, :return_to => request.fullpath %>
+					<% end
 				end
 				if child_is_association(child_name) %>
 					<%=link_to 'Associate', {:action => 'associate', :child => child_name, parent_attr => @resource.id, :return_to => request.fullpath} %>

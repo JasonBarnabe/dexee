@@ -701,10 +701,7 @@ module Dexee
 		end
 
 		def inverse_attribute(model_class, attr)
-			model_class.reflect_on_all_associations.each{|a|
-				return a.options[:inverse_of] if a.name == attr.to_sym
-			}
-			return nil
+			return model_class.reflect_on_association(attr).inverse_of
 		end
 
 		def show_new_child_link(attr)

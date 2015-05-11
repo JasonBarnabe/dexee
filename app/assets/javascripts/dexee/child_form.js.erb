@@ -1,0 +1,31 @@
+$(document).ready(function() {
+	$('.add-child-form').click(function(e) {
+		e.preventDefault();
+		var button = $(this);
+		var url = $(this).attr('data-child-generation-url');
+		var format = $(this).attr('data-child-format');
+		var childIndexS = $('.' + $(this).attr('data-child-name') + '-index:last').val();
+		var childIndex;
+		if (childIndexS == null) {
+			childIndex = 0
+		} else {
+			childIndex = parseInt(childIndexS, 10) + 1;
+		}
+		$.ajax({
+			type: "GET",
+			url: url,
+			data: {
+				index: childIndex,
+				format: format
+			}
+		}).success(function(data) {
+			if (format == "table") {
+				button.prev('table').children('tbody').append(data);
+			} else {
+				button.before(data);
+			}
+		}).fail(function(data) {
+			alert('Add form failed');
+		});
+	});
+})
