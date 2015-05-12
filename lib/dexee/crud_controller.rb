@@ -1,18 +1,53 @@
-require 'fileutils'
+require 'active_support/concern'
+require 'dexee/application_helper'
+require 'dexee/crud_helper'
 require 'public_activity'
-require 'responders'
-require 'acts_as_xlsx'
-require 'simple_form'
 
 module Dexee
-	class CrudController < ApplicationController
+	module CrudController
+		extend ActiveSupport::Concern
+		include Dexee::ApplicationHelper
 		include Dexee::CrudHelper
-		include PublicActivity::StoreController 
+		include ::PublicActivity::StoreController
 
-		helper WickedPdfHelper
+		included do
+			respond_to :html, :json
+			respond_to :xlsx, :only => :index
 
-		respond_to :html, :json
-		respond_to :xlsx, :only => :index
+			helper WickedPdfHelper
+			helper ApplicationHelper
+			helper CrudHelper
+
+			helper_method :attrs_for_index
+			helper_method :attrs_for_form
+			helper_method :attrs_for_show
+			helper_method :attrs_for_associate
+			helper_method :children_for_show
+			helper_method :additional_show_actions
+			helper_method :children_for_form
+			helper_method :get_controller_for_attr
+			helper_method :get_controller_for_model
+			helper_method :inverse_attribute
+			helper_method :model_class
+			helper_method :model_name
+			helper_method :show_new_child_link
+			helper_method :show_delete_in_list?
+			helper_method :generate_new_child_link
+			helper_method :child_is_association
+			helper_method :filters_active?
+			helper_method :child_row_limit
+			helper_method :child_row_limit_override
+			helper_method :render_pdf_content
+			helper_method :dexee_user
+
+			before_filter :restrict_by_controller
+
+			# Because we're a module and not a class, gotta set up all this junk
+			before_filter do
+				lookup_context.prefixes << 'dexee/crud'
+			end
+			layout 'layouts/dexee/crud'
+		end
 
 		# Return an object representing the current logged in user, which includes Dexee::User
 		def dexee_user
@@ -798,31 +833,9 @@ module Dexee
 
 		end
 
-		before_filter :restrict_by_controller
 		def restrict_by_controller
 			render :text => 'You don\'t have access to that.', :layout => false, :status => 403 unless dexee_user.can_access_controller(controller_name) || action_name == 'autocomplete_list'
 		end
 
-		helper_method :attrs_for_index
-		helper_method :attrs_for_form
-		helper_method :attrs_for_show
-		helper_method :attrs_for_associate
-		helper_method :children_for_show
-		helper_method :additional_show_actions
-		helper_method :children_for_form
-		helper_method :get_controller_for_attr
-		helper_method :get_controller_for_model
-		helper_method :inverse_attribute
-		helper_method :model_class
-		helper_method :model_name
-		helper_method :show_new_child_link
-		helper_method :show_delete_in_list?
-		helper_method :generate_new_child_link
-		helper_method :child_is_association
-		helper_method :filters_active?
-		helper_method :child_row_limit
-		helper_method :child_row_limit_override
-		helper_method :render_pdf_content
-		helper_method :dexee_user
 	end
 end
