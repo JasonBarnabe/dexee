@@ -776,7 +776,16 @@ module Dexee
 			attrs = model_class.attribute_names.map {|a| a.to_sym}
 			attrs = attrs - exceptions
 			return attrs if !return_hash
-			return attrs.each_with_object({}) { |v,h| h[v] = {} }
+			return attrs.each_with_object({}) { |v,h|
+				h[v] = {}
+				h[v][:type] = :numeric if model_class.columns_hash[v.to_s].cast_type.is_a?(ActiveRecord::Type::Integer) && !v.to_s.ends_with?('_id')
+				h[v][:label] = label_overrides[v] if label_overrides.has_key?(v)
+			}
+		end
+
+		# Return an array of attribute (symbol) to label to use for that attribute.
+		def label_overrides
+			{}
 		end
 
 		# Insert keys at a position in a hash
