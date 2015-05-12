@@ -30,13 +30,15 @@
 			if !child_controller.nil?
 				if opts.include?(:attrs)
 					child_index_attrs = opts[:attrs]
-				elsif !inverse.nil?
+				else
 					child_index_attrs = child_controller.attrs_for_index.dup
-					child_index_attrs.delete(inverse.name)
-					child_index_attrs.delete(inverse.name.to_sym)
-					# ..._id
-					child_index_attrs.delete(inverse.foreign_key)
-					child_index_attrs.delete(inverse.foreign_key.to_sym)
+					if !inverse.nil?
+						child_index_attrs.delete(inverse.name)
+						child_index_attrs.delete(inverse.name.to_sym)
+						# ..._id
+						child_index_attrs.delete(inverse.foreign_key)
+						child_index_attrs.delete(inverse.foreign_key.to_sym)
+					end
 				end
 				child_index_additional_values = child_controller.additional_index_values
 			end
