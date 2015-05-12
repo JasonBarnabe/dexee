@@ -8,10 +8,13 @@
 
 <% child_controller = get_controller_for_attr(simple_form.object, child_name)
 inverse = inverse_attribute(controller.model_class, child_name)
-inverse_id = (inverse.to_s + '_id').to_sym
 child_form_attrs = opts[:attrs].nil? ? child_controller.attrs_for_form : opts[:attrs]
-child_form_attrs.delete(inverse)
-child_form_attrs.delete(inverse_id)
+if !inverse.nil?
+	child_form_attrs.delete(inverse.name)
+	child_form_attrs.delete(inverse.name.to_sym)
+	child_form_attrs.delete(inverse.foreign_key)
+	child_form_attrs.delete(inverse.foreign_key.to_sym)
+end
 child_index = 0 unless defined?(child_index)
 only_row = false if !defined?(only_row)
 

@@ -84,8 +84,11 @@ tfoot td {
    font: -moz-field;
    height: 4em;
 }
-.simple_form input:not([name*="compound"]):not([type]):not(.datepicker):not([size]), .simple_form input[type="text"]:not([name*="compound"]):not(.datepicker):not([size]), .simple_form input[type="email"]:not([name*="compound"]):not(.datepicker):not([size]), .simple_form textarea {
+.simple_form input {
 	width: 30em;
+}
+.simple_form input[type="submit"], .simple_form input[type="radio"], .simple_form input[type="checkbox"], .simple_form input[type="button"], .simple_form input[name*="compound"], .simple_form input.datepicker, .simple_form[size], .simple_form .form-table input {
+	width: auto;
 }
 .simple_form input.datepicker {
 	width: 7em;
@@ -94,6 +97,7 @@ input[type=number]:not([size]) {
 	text-align: right;
 	width: 7em;
 }
+
 /* move checkbox label before input */
 .boolean label {
 	float: left;
