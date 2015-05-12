@@ -26,10 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'public_activity'
   s.add_dependency 'responders', '~> 2.0'
   s.add_dependency 'strip_attributes'
-  s.add_dependency 'schema_validations'
-  # schema_validations uses schema_plus, need 2.0.0+ for support with Rails 4.2 - https://github.com/SchemaPlus/schema_plus/issues/210
-  s.add_dependency 'schema_plus', '~> 2.0.0pre15'
-
+  s.add_dependency 'schema_validations', "~> 1.2.0"
   s.add_dependency 'jquery-ui-rails'
   s.add_dependency 'simple-form-datepicker-reloaded'
 
