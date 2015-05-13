@@ -1,5 +1,5 @@
 module Dexee
-	class GenericDexeeUser
+	class GenericUser
 		include User
 	end
 end

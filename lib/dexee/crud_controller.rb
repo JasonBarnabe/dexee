@@ -1,6 +1,7 @@
 require 'active_support/concern'
 require 'dexee/application_helper'
 require 'dexee/crud_helper'
+require 'dexee/generic_mailer'
 require 'public_activity'
 
 module Dexee
@@ -51,7 +52,7 @@ module Dexee
 
 		# Return an object representing the current logged in user, which includes Dexee::User
 		def dexee_user
-			return GenericDexeeUser.new
+			return GenericUser.new
 		end
 
 		###
@@ -824,8 +825,8 @@ module Dexee
 				# Activates wicked_pdf stylesheet tag in pdf.html.erb
 				params[:format] = 'pdf'
 
-				pdf = WickedPdf.new.pdf_from_string(render_to_string('crud/pdf', :layout => false, :locals => {:template => template}), :encoding => 'UTF-8', :print_media_type => true, :orientation => orientation)
-				CustomerMailer.generic_email(params[:to], dexee_user.email, dexee_user.email, email_subject, params[:body], [{:name => file_name, :mime_type => 'application/pdf', :content => pdf}], dexee_user).deliver
+				pdf = WickedPdf.new.pdf_from_string(render_to_string('dexee/crud/pdf', :layout => false, :locals => {:template => template}), :encoding => 'UTF-8', :print_media_type => true, :orientation => orientation)
+				GenericMailer.dexee_email(params[:to], dexee_user.email, dexee_user.email, email_subject, params[:body], [{:name => file_name, :mime_type => 'application/pdf', :content => pdf}], dexee_user).deliver_now
 				flash[:notice] = 'E-mail sent.'
 				redirect_to({:controller => params[:controller], :action => params[:action], :id => params[:id]})
 				return

@@ -9,6 +9,10 @@ module Dexee
 			return 'Dexee User'
 		end
 
+		def email
+			return nil
+		end
+
 		def can_access_controller(o)
 			return true
 		end
