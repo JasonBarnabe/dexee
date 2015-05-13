@@ -17,8 +17,15 @@ $(document).ready(function() {
 
 		// anchor is where the selection started, focus is where it ended. If someone selected upwards, swap them
 		if (comparePos(startPos, endPos) == 1) {
-			[startPos, endPos] = [endPos, startPos];
-			[startNode, endNode] = [endNode, startNode];
+			// Doesn't work in Chrome
+			// [startPos, endPos] = [endPos, startPos];
+			// [startNode, endNode] = [endNode, startNode];
+			var tmpPos = startPos;
+			startPos = endPos;
+			endPos = tmpPos;
+			var tmpNode = startNode;
+			startNode = endNode;
+			endNode = tmpNode;
 		}
 
 		// grab all checkboxes, then see if they fall within the start and end positions
