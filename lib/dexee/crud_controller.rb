@@ -44,7 +44,7 @@ module Dexee
 
 			# Because we're a module and not a class, gotta set up all this junk
 			before_filter do
-				lookup_context.prefixes << 'dexee/crud'
+				lookup_context.prefixes << 'dexee/crud' unless lookup_context.prefixes.include?('dexee/crud')
 			end
 			layout 'layouts/dexee/crud'
 		end
