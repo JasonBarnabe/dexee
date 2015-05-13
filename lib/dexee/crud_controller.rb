@@ -826,7 +826,7 @@ module Dexee
 				params[:format] = 'pdf'
 
 				pdf = WickedPdf.new.pdf_from_string(render_to_string('dexee/crud/pdf', :layout => false, :locals => {:template => template}), :encoding => 'UTF-8', :print_media_type => true, :orientation => orientation)
-				GenericMailer.dexee_email(params[:to], dexee_user.email, dexee_user.email, email_subject, params[:body], [{:name => file_name, :mime_type => 'application/pdf', :content => pdf}], dexee_user).deliver_now
+				GenericMailer.dexee_email(params[:to], dexee_user.dexee_email, dexee_user.dexee_email, email_subject, params[:body], [{:name => file_name, :mime_type => 'application/pdf', :content => pdf}], dexee_user).deliver_now
 				flash[:notice] = 'E-mail sent.'
 				redirect_to({:controller => params[:controller], :action => params[:action], :id => params[:id]})
 				return
