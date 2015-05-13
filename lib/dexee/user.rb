@@ -9,8 +9,10 @@ module Dexee
 			return 'Dexee User'
 		end
 
-		def email
-			return nil
+		if !self.class.method_defined?(:email)
+			def email
+				return nil
+			end
 		end
 
 		def can_access_controller(o)
