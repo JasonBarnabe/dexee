@@ -1,14 +1,6 @@
 module Dexee
 	module User
 
-		def name
-			return 'Dexee User'
-		end
-
-		def display_text
-			return 'Dexee User'
-		end
-
 		def dexee_email
 			return email if respond_to?(:email)
 			return 'dexee@example.invalid'
