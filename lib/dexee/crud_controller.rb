@@ -834,7 +834,7 @@ module Dexee
 				# Activates wicked_pdf stylesheet tag in pdf.html.erb
 				params[:format] = 'pdf'
 
-				pdf = WickedPdf.new.pdf_from_string(render_to_string(:pdf => file_name, :template => 'dexee/crud/pdf', :formats => 'html', :encoding => 'UTF-8', :print_media_type => true, :orientation => orientation, :locals => {:template => template}))
+				pdf = WickedPdf.new.pdf_from_string(render_to_string('dexee/crud/pdf', :layout => false, :locals => {:template => template}), :encoding => 'UTF-8', :print_media_type => true, :orientation => orientation)
 				GenericMailer.dexee_email(params[:to], dexee_user.dexee_email, dexee_user.dexee_email, email_subject, params[:body], [{:name => file_name, :mime_type => 'application/pdf', :content => pdf}], dexee_user).deliver_now
 				flash[:notice] = 'E-mail sent.'
 				redirect_to({:controller => params[:controller], :action => params[:action], :id => params[:id]})
