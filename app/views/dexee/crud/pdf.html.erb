@@ -37,8 +37,14 @@ end %>
 
 <form id="email-options">
 	<input type="hidden" name="email" value="1">
-	<% params.except(:controller, :action).each do |k, v| %>
-		<input type="hidden" name="<%=k%>" value="<%=v%>">
+	<% params.except(:controller, :action).each do |k, v|
+		if v.is_a?(Array)
+			v.each do |w| %>
+				<input type="hidden" name="<%=k%>[]" value="<%=w%>">
+			<% end
+		else %>
+			<input type="hidden" name="<%=k%>" value="<%=v%>">
+		<% end %>
 	<% end %>
 
 	<p>
