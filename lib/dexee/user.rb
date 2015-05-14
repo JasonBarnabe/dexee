@@ -3,7 +3,7 @@ module Dexee
 
 		def dexee_email
 			return email if respond_to?(:email)
-			return 'dexee@example.invalid'
+			raise 'You must implement dexee_email'
 		end
 
 		def can_access_controller(o)

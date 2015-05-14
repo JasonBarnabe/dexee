@@ -11,6 +11,16 @@ module Dexee
 		include Dexee::CrudHelper
 		include ::PublicActivity::StoreController
 
+		class_methods do
+			# Define a method only if it's not already defined.
+			def default_def(name, &block)
+				return if instance_methods(true).include?(name)
+				class_eval do
+					define_method(name, &block)
+				end
+			end
+		end
+
 		included do
 			respond_to :html, :json
 			respond_to :xlsx, :only => :index
@@ -48,11 +58,10 @@ module Dexee
 				lookup_context.prefixes << 'dexee/crud' unless lookup_context.prefixes.include?('dexee/crud')
 			end
 			layout 'layouts/dexee/crud'
-		end
 
-		# Return an object representing the current logged in user, which includes Dexee::User
-		def dexee_user
-			return GenericUser.new
+			default_def :dexee_user do
+				GenericUser.new
+			end
 		end
 
 		###
