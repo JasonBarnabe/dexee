@@ -271,6 +271,7 @@ module Dexee
 		# Hash of available filters. Filter name (maps to parameter name) to options hash. Options hash consists of:
 		# - label
 		# - type: :boolean, :string, or a model class
+		# - display_attr: when type is a class, attribute of type to use as option label
 		# - values: hash or array as would be passed to options_for_select
 		# - size: for string input, the max size of the input
 		# Either type or values must be provided, but not both.
