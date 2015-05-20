@@ -7,14 +7,14 @@
 	<% if !model_class.search_fields.nil? and !model_class.search_fields.empty? %>
 		<input id="<%=model_name.to_s.pluralize.underscore%>-jump" class="combobox-entry jump-to" data-autocomplete-url="<%=url_for(:controller => model_name.underscore.pluralize, :action => 'autocomplete_list', :id => nil)%>" data-jump-url="<%=url_for(:action => :show, :id => 999999999)%>" placeholder="Jump to" <%if action_name == 'index'%>autofocus<%end%>>
 	<% end %>
-	<% if !['new', 'create'].include?(action_name) %>
+	<% if !['new', 'create'].include?(action_name) && dexee_user.can_create_model(model_class) %>
 		<%= link_to 'New', [:new, model_name.underscore.to_sym], :class => "action-link" %>
 	<% end %>
 	<% if defined?(resource) && !resource.nil? && !resource.new_record? %>
 		<% if !['edit', 'update'].include?(action_name) %>
 			<%= link_to 'Edit', [:edit, resource], :class => "action-link" %>
 		<% end %>
-		<% if resource.allow_delete? %>
+		<% if resource.allow_delete? && dexee_user.can_delete_model(resource) %>
 			<%= link_to 'Delete', url_for(id: resource.id, return_to: url_for(action: 'index')), :method => :delete, :class => "action-link", :data => {:confirm => "Delete #{resource.display_text}?"} %>
 		<% end %>
 		<% if !additional_show_actions.nil? %>

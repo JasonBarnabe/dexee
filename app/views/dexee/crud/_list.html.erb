@@ -18,7 +18,7 @@ resources = [resources] if resources.is_a?(ActiveRecord::Base)
 if resources.empty? %>
 	<p><i>(None)</i></p>
 <% else %>
-	<% any_actions_allowed = allow_edits || resources.any?{|r|r.allow_delete?} || (defined?(additional_resource_actions) && !additional_resource_actions.nil?) %>
+	<% any_actions_allowed = allow_edits || resources.any?{|r|r.allow_delete? && dexee_user.can_delete_model(r)} || (defined?(additional_resource_actions) && !additional_resource_actions.nil?) %>
 	<table class="index-table">
 		<thead>
 			<tr>
@@ -61,10 +61,10 @@ if resources.empty? %>
 						<% end
 						if any_actions_allowed %>
 							<td class="list-entry-actions">
-								<% if allow_edits %>
+								<% if allow_edits && dexee_user.can_update_model(resource)%>
 									<%= link_to 'Edit', edit_polymorphic_path(resource, :return_to => request.fullpath) %>
 								<% end
-								if show_delete_in_list? && resource.allow_delete? %>
+								if show_delete_in_list? && resource.allow_delete? && dexee_user.can_delete_model(resource)%>
 									<%= link_to 'Delete', resource, :method => :delete, :data => {:confirm => "Delete #{resource.display_text}?"} %>
 								<% end
 								if defined?(additional_resource_actions) and additional_resource_actions

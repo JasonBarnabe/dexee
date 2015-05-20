@@ -431,6 +431,10 @@ module Dexee
 		end
 
 		def new
+			if !dexee_user.can_create_model(model_class)
+				render :text => 'You don\'t have access to create this resource.', :status => 403
+				return
+			end
 			@return_to = params[:return_to]
 			@resource = model_class.new
 			children_for_form.each do |k, v|
@@ -484,6 +488,11 @@ module Dexee
 		end
 
 		def create
+			if !dexee_user.can_create_model(model_class)
+				render :text => 'You don\'t have access to create this resource.', :status => 403
+				return
+			end
+
 			@return_to = params[:return_to]
 
 			#@resource = model_class.create(permitted_params)
@@ -854,7 +863,7 @@ module Dexee
 		end
 
 		def restrict_by_controller
-			render :text => 'You don\'t have access to that.', :layout => false, :status => 403 unless dexee_user.can_access_controller(controller_name) || action_name == 'autocomplete_list'
+			render :text => 'You don\'t have access to that.', :layout => false, :status => 403 unless dexee_user.can_access_controller(self) || action_name == 'autocomplete_list'
 		end
 
 	end
