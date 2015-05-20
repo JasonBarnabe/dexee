@@ -11,7 +11,7 @@
 		<%= link_to 'New', [:new, model_name.underscore.to_sym], :class => "action-link" %>
 	<% end %>
 	<% if defined?(resource) && !resource.nil? && !resource.new_record? %>
-		<% if !['edit', 'update'].include?(action_name) %>
+		<% if !['edit', 'update'].include?(action_name) && dexee_user.can_update_model(resource) %>
 			<%= link_to 'Edit', [:edit, resource], :class => "action-link" %>
 		<% end %>
 		<% if resource.allow_delete? && dexee_user.can_delete_model(resource) %>
@@ -20,7 +20,7 @@
 		<% if !additional_show_actions.nil? %>
 			<% additional_show_actions.call(resource).each do |action|
 				if action_name != action[:action].to_s %>
-					<%= link_to action[:label] || action[:action].to_s.titlecase, [resource, action[:action]], :method => action[:method] == :get ? nil : action[:method], :data => {:confirm => action[:confirm]}, :class => "action-link action-link-#{action[:action].to_s}" %>
+					<%= link_to action[:label] || action[:action].to_s.titlecase, action[:url] || [resource, action[:action]], :method => action[:method] == :get ? nil : action[:method], :data => {:confirm => action[:confirm]}, :class => "action-link action-link-#{action[:action].to_s}" %>
 				<% end %>
 			<% end %>
 		<% end %>
