@@ -182,6 +182,10 @@ module Dexee
 			100
 		end
 
+		def index_export_limit
+			2000
+		end
+
 		# Whether to limit the number of child rows on a show page - limited by count and show_in_child_list?
 		def filter_children_on_show
 			false
@@ -358,8 +362,7 @@ module Dexee
 					@resources = index_lookup_chain(@resources.includes(includes_for_index)).paginate(:page => params[:page], :per_page => index_per_page)
 				}
 				format.xlsx {
-					# all records is too much in many cases - limit to 2000
-					@resources = @resources.limit(2000)
+					@resources = @resources.limit(index_export_limit)
 					@resources = export_lookup_chain(@resources.includes(includes_for_export))
 					Axlsx::Package.new do |p|
 						p.workbook.add_worksheet(:name => model_class.to_s.titlecase.pluralize) do |sheet|

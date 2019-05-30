@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = Dexee::VERSION
   s.authors     = ["Jason Barnabe"]
   s.email       = ["jason.barnabe@gmail.com"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of Dexee."
-  s.description = "TODO: Description of Dexee."
+  s.homepage    = "https://github.com/JasonBarnabe/dexee"
+  s.summary     = "Rails CRUD engine"
+  s.description = "Rails CRUD engine"
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
